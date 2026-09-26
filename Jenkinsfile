@@ -1,49 +1,34 @@
 pipeline {
     agent any
-
     environment {
         DOCKER_IMAGE = "ml-model-app:latest"
         CONTAINER_NAME = "ml-model-service"
     }
-
     stages {
         stage('Set Up Environment') {
             steps {
                 sh '''
                     python3 -m venv venv
-                    . venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
+                    ./venv/bin/pip install --upgrade pip
+                    ./venv/bin/pip install -r requirements.txt
                 '''
             }
         }
-
         stage('Train Model') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    python train.py
-                '''
+                sh './venv/bin/python train.py'
             }
         }
-
         stage('Run Unit Tests') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    pytest test_app.py
-                '''
+                sh './venv/bin/pytest test_app.py'
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                sh '''
-                    docker build -t $DOCKER_IMAGE .
-                '''
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
-
         stage('Deploy Container') {
             steps {
                 sh '''
@@ -54,7 +39,6 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             cleanWs()
