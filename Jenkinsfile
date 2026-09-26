@@ -1,6 +1,7 @@
 pipeline {
     agent any
     environment {
+        PATH = "/usr/local/bin:/opt/homebrew/bin:${env.PATH}"
         DOCKER_IMAGE = "ml-model-app:latest"
         CONTAINER_NAME = "ml-model-service"
     }
